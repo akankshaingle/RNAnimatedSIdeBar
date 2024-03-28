@@ -10,8 +10,8 @@ export const animate2 = {
 
 export const circle1 = {
   0: {scale: 0},
-  0.3: {scale: 0.9},
-  0.5: {scale: 0.2},
+  0.3: {scale: 0.5},
+  0.5: {scale: 0.8},
   1: {scale: 1},
 };
 

@@ -36,7 +36,7 @@ const TabArr = [
   },
   {
     route: 'Cart',
-    label: 'cart',
+    label: 'Cart',
     icon: (
       <MaterialCommunityIcons name={'cart-heart'} size={30} color={'white'} />
     ),
@@ -79,7 +79,7 @@ const TabButton = props => {
       activeOpacity={1}
       onPress={onPress}
       style={styles.container}>
-      <Animatable.View style={styles.container} ref={viewRef} duration={1000}>
+      <Animatable.View style={styles.container} ref={viewRef} duration={400}>
         <View
           style={[styles.btn, {borderColor: focused ? 'white' : '#D95B43'}]}>
           <Animatable.View ref={circleRef} style={styles.circle} />
