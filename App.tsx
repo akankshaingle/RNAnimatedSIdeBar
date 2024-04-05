@@ -21,13 +21,13 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import * as Strings from '././src/utils/strings.js';
 import * as Images from './src/utils/imagePath.tsx';
 import DrawerSceneWrapper from './src/components/DrawerSceneWrapper.tsx';
-import Cart from './src/screens/Cart.js';
+import Cart from './src/screens/Cart.tsx';
 import Home from './src/screens/Home.tsx';
-import Notification from './src/screens/Notification.js';
-import Profile from './src/screens/Profile.js';
-import Splash from './src/screens/Splash.js';
+import Notification from './src/screens/Notification.tsx';
+import Profile from './src/screens/Profile.tsx';
 import {height, width} from './src/utils/scale.js';
 import colors from './src/utils/colors.tsx';
+import Splash from './src/screens/Splash.tsx';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -230,7 +230,11 @@ const TabButton = props => {
         );
       case 'Notification':
         return focused ? (
-          <MaterialCommunityIcons name={'bell'} size={25} color={colors.primary} />
+          <MaterialCommunityIcons
+            name={'bell'}
+            size={25}
+            color={colors.primary}
+          />
         ) : (
           <MaterialCommunityIcons
             name={'bell-outline'}
@@ -240,7 +244,11 @@ const TabButton = props => {
         );
       case 'Cart':
         return focused ? (
-          <MaterialCommunityIcons name={'cart'} size={25} color={colors.primary} />
+          <MaterialCommunityIcons
+            name={'cart'}
+            size={25}
+            color={colors.primary}
+          />
         ) : (
           <MaterialCommunityIcons
             name={'cart-outline'}
