@@ -1,3 +1,5 @@
+//Animation
+export const GOOGLE_API_KEY = 'AIzaSyB1zTngjGStR8HI4D8fltPVCertXBs2uXY';
 export const animate1 = {
   0: {scale: 0.5, translateY: 7},
   0.92: {scale: 1, translateY: -24},

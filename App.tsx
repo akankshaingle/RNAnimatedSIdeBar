@@ -1,111 +1,282 @@
-import React, {useEffect, useRef} from 'react';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {
+  DrawerContentScrollView,
+  createDrawerNavigator,
+} from '@react-navigation/drawer';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React from 'react';
+import {
+  Image,
+  Platform,
   StatusBar,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
   useColorScheme,
 } from 'react-native';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
-import * as Animatable from 'react-native-animatable';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import * as Strings from '././src/utils/strings.js';
+import * as Images from './src/utils/imagePath.tsx';
+import DrawerSceneWrapper from './src/components/DrawerSceneWrapper.tsx';
 import Cart from './src/screens/Cart.js';
-import Home from './src/screens/Home.js';
+import Home from './src/screens/Home.tsx';
 import Notification from './src/screens/Notification.js';
 import Profile from './src/screens/Profile.js';
-import * as constantsJs from './src/utils/constants.js';
+import Splash from './src/screens/Splash.js';
+import {height, width} from './src/utils/scale.js';
+import colors from './src/utils/colors.tsx';
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
+
+const HomeStack = createNativeStackNavigator();
+const NotificationStack = createNativeStackNavigator();
+const CartStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator();
 
 const TabArr = [
   {
-    route: 'Home',
+    route: 'tab1',
     label: 'Home',
-    icon: <Ionicons name={'home-outline'} size={30} color={'white'} />,
-    component: Home,
-  },
-  {
-    route: 'Notification',
-    label: 'Notification',
-    icon: (
-      <MaterialCommunityIcons name={'bell-outline'} size={30} color={'white'} />
-    ),
     component: Notification,
   },
   {
-    route: 'Cart',
+    route: 'tab2',
+    label: 'Notification',
+    component: Notification,
+  },
+  {
+    route: 'tab3',
     label: 'Cart',
-    icon: (
-      <MaterialCommunityIcons name={'cart-heart'} size={30} color={'white'} />
-    ),
     component: Cart,
   },
   {
-    route: 'Profile',
+    route: 'tab4',
     label: 'Profile',
-    icon: <Ionicons name={'person-outline'} size={30} color={'white'} />,
     component: Profile,
   },
 ];
 
+const CustomDrawerContent = props => {
+  const isDarkMode = useColorScheme() === 'dark';
+  const navigateTo = (screen: string) => {
+    props.navigation.navigate(screen);
+  };
+  return (
+    <View style={[styles.MenuContainer]}>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        translucent={true}
+        backgroundColor="transparent"
+      />
+      <DrawerContentScrollView {...props}>
+        <View style={[styles.profileView]}>
+          <TouchableOpacity style={styles.avatarShadow}>
+            <Image source={Images.profile} style={[styles.profile]} />
+          </TouchableOpacity>
+          <Text style={styles.name}>Harriet Tubman</Text>
+        </View>
+        <View style={styles.line} />
+        {[
+          {
+            screen: Strings.rHomeStackScreen,
+            icon: 'home-outline',
+            label: 'Home',
+          },
+          {
+            screen: Strings.rNotificationStackScreen,
+            icon: 'notifications-outline',
+            label: 'Notification',
+          },
+          {
+            screen: Strings.rProfileStackScreen,
+            icon: 'person-outline',
+            label: 'Profile',
+          },
+          {
+            screen: Strings.rCartStackScreen,
+            icon: 'cart-outline',
+            label: 'Cart',
+          },
+          {
+            screen: Strings.rTabNavigator,
+            icon: 'settings-outline',
+            label: 'Settings',
+          },
+        ].map((item, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.drawerItemView}
+            onPress={() => navigateTo(item.screen)}>
+            <Ionicons name={item.icon} size={22} color={colors.white} />
+            <Text style={styles.label}>{item.label}</Text>
+          </TouchableOpacity>
+        ))}
+      </DrawerContentScrollView>
+      <TouchableOpacity
+        style={styles.bottomView}
+        onPress={() => props.navigation.navigate(Strings.rHome)}>
+        <Ionicons name={'log-out-outline'} size={22} color={colors.white} />
+        <Text style={[styles.label]}>Signout</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const DrawerStack = () => {
+  return (
+    <Drawer.Navigator
+      drawerContent={props => <CustomDrawerContent {...props} />}
+      screenOptions={{
+        drawerType: 'back',
+        headerShown: false,
+        overlayColor: 'transparent',
+        drawerStyle: styles.drawerStyle,
+        drawerStatusBarAnimation: 'slide',
+        sceneContainerStyle: {
+          backgroundColor: colors.primary,
+        },
+      }}>
+      {[
+        {name: Strings.rHomeStackScreen, component: HomeStackScreen},
+        {
+          name: Strings.rNotificationStackScreen,
+          component: NotificationStackScreen,
+        },
+        {name: Strings.rCartStackScreen, component: CartStackScreen},
+        {name: Strings.rProfileStackScreen, component: ProfileStackScreen},
+        {name: Strings.rTabNavigator, component: TabNavigator},
+      ].map((item, index) => (
+        <Drawer.Screen
+          key={index}
+          name={item.name}
+          component={item.component}
+        />
+      ))}
+    </Drawer.Navigator>
+  );
+};
+
+const HomeStackScreen = () => {
+  return (
+    <DrawerSceneWrapper>
+      <HomeStack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: styles.contentStyle,
+        }}>
+        <HomeStack.Screen name={Strings.rHome} component={Home} />
+      </HomeStack.Navigator>
+    </DrawerSceneWrapper>
+  );
+};
+const NotificationStackScreen = () => {
+  return (
+    <DrawerSceneWrapper>
+      <NotificationStack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: styles.contentStyle,
+        }}>
+        <NotificationStack.Screen
+          name={Strings.rNotification}
+          component={Notification}
+        />
+      </NotificationStack.Navigator>
+    </DrawerSceneWrapper>
+  );
+};
+const CartStackScreen = () => {
+  return (
+    <DrawerSceneWrapper>
+      <CartStack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: styles.contentStyle,
+        }}>
+        <CartStack.Screen name={Strings.rCart} component={Cart} />
+      </CartStack.Navigator>
+    </DrawerSceneWrapper>
+  );
+};
+const ProfileStackScreen = () => {
+  return (
+    <DrawerSceneWrapper>
+      <ProfileStack.Navigator
+        screenOptions={{
+          headerShown: false,
+          contentStyle: styles.contentStyle,
+        }}>
+        <ProfileStack.Screen name={Strings.rCart} component={Cart} />
+      </ProfileStack.Navigator>
+    </DrawerSceneWrapper>
+  );
+};
 const TabButton = props => {
   const {item, onPress, accessibilityState} = props;
   const focused = accessibilityState.selected;
 
-  const viewRef = useRef(null);
-  const circleRef = useRef(null);
-  const textRef = useRef(null);
+  const renderIcon = () => {
+    switch (item.label) {
+      case 'Home':
+        return focused ? (
+          <Ionicons name={'home'} size={25} color={colors.primary} />
+        ) : (
+          <Ionicons name={'home-outline'} size={25} color={colors.primary} />
+        );
+      case 'Notification':
+        return focused ? (
+          <MaterialCommunityIcons name={'bell'} size={25} color={colors.primary} />
+        ) : (
+          <MaterialCommunityIcons
+            name={'bell-outline'}
+            size={25}
+            color={colors.primary}
+          />
+        );
+      case 'Cart':
+        return focused ? (
+          <MaterialCommunityIcons name={'cart'} size={25} color={colors.primary} />
+        ) : (
+          <MaterialCommunityIcons
+            name={'cart-outline'}
+            size={25}
+            color={colors.primary}
+          />
+        );
+      case 'Profile':
+        return focused ? (
+          <Ionicons name={'person'} size={25} color={colors.primary} />
+        ) : (
+          <Ionicons name={'person-outline'} size={25} color={colors.primary} />
+        );
 
-  useEffect(() => {
-    if (viewRef.current && circleRef.current && textRef.current) {
-      if (focused) {
-        viewRef.current.animate(constantsJs.animate1);
-        circleRef.current.animate(constantsJs.circle1);
-        textRef.current.transition({scale: 1});
-      } else {
-        viewRef.current.animate(constantsJs.animate2);
-        circleRef.current.animate(constantsJs.circle2);
-        textRef.current.transition({scale: 0});
-      }
+      default:
+        break;
     }
-  }, [focused]);
-
-  const Icon = item.icon;
+  };
 
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPress={onPress}
       style={styles.container}>
-      <Animatable.View style={styles.container} ref={viewRef} duration={400}>
-        <View
-          style={[styles.btn, {borderColor: focused ? 'white' : '#D95B43'}]}>
-          <Animatable.View ref={circleRef} style={styles.circle} />
-          {Icon}
-        </View>
-        <Animatable.Text
-          ref={textRef}
-          style={[styles.text, focused ? {opacity: 1} : {opacity: 0}]}>
-          {item.label}
-        </Animatable.Text>
-      </Animatable.View>
+      {renderIcon()}
     </TouchableOpacity>
   );
 };
-
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
+const TabNavigator = () => {
   return (
-    <NavigationContainer>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={'white'}
-      />
+    <DrawerSceneWrapper>
       <Tab.Navigator
-        screenOptions={{headerShown: false, tabBarStyle: styles.tabBarStyle}}>
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: styles.tabBarStyle,
+        }}>
         {TabArr.map((item, index) => (
           <Tab.Screen
             key={index}
@@ -118,6 +289,25 @@ function App() {
           />
         ))}
       </Tab.Navigator>
+    </DrawerSceneWrapper>
+  );
+};
+
+function App() {
+  const isDarkMode = useColorScheme() === 'dark';
+  return (
+    <NavigationContainer>
+      <StatusBar
+        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+        backgroundColor={colors.white}
+      />
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}>
+        <Stack.Screen name={Strings.rSplash} component={Splash} />
+        <Stack.Screen name={Strings.rDrawerStack} component={DrawerStack} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
@@ -128,37 +318,107 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tabBarStyle: {
-    position: 'absolute',
-    height: 70,
-    bottom: 24,
-    right: 16,
-    left: 16,
-    borderRadius: 16,
-    backgroundColor: '#D95B43',
+    backgroundColor: colors.white,
     borderTopWidth: 1,
-  },
-  btn: {
-    width: 55,
-    height: 55,
-    borderWidth: 4,
-    backgroundColor: 'transparent',
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingTop: 15,
+    height: 70,
   },
   text: {
     fontSize: 14,
     textAlign: 'center',
-    color: 'white',
-    marginTop: 6,
+    color: colors.white,
+  },
+  MenuContainer: {
+    flex: 1,
+  },
+  profileView: {
+    flex: 1,
+    marginHorizontal: 15,
+    ...Platform.select({
+      ios: {
+        paddingTop: height * 0.03,
+      },
+      android: {
+        paddingTop: height * 0.08,
+      },
+    }),
+  },
+  avatarShadow: {
+    borderRadius: 100,
+    backgroundColor: colors.white,
+    elevation: 24,
+    shadowColor: '#3A5160',
+    shadowOffset: {
+      width: 2,
+      height: 4,
+    },
+    shadowOpacity: 0.6,
+    shadowRadius: 8,
+    width: height * 0.08,
+    height: height * 0.08,
+  },
+  profile: {
+    width: height * 0.08,
+    height: height * 0.08,
+    borderRadius: 100,
+  },
+  line: {
+    borderWidth: 1,
+    marginHorizontal: 15,
+    marginTop: 20,
+    marginBottom: 10,
+    borderColor: colors.white,
+  },
+  name: {
+    fontSize: 20,
+    paddingTop: 20,
+    color: colors.white,
+    fontWeight: '700',
+  },
+  drawerItemView: {
+    flexDirection: 'row',
+    marginHorizontal: 10,
+    marginVertical: 15,
+    alignItems: 'center',
+  },
+  label: {
+    color: colors.white,
+    fontSize: 18,
+    paddingStart: 15,
     fontWeight: '500',
   },
-  circle: {
-    ...StyleSheet.absoluteFillObject,
+  drawerSceneContainer: {
+    elevation: 24,
+    shadowColor: '#000',
+    backgroundColor: colors.primary,
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
+  },
+  drawerStyle: {
+    backgroundColor: colors.primary,
+    width: 250,
+  },
+  bottomView: {
+    flexDirection: 'row',
+    marginHorizontal: 10,
+    marginVertical: 15,
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#D95B43',
-    borderRadius: 25,
+    marginBottom: width * 0.2,
+  },
+  contentStyle: {
+    elevation: 24,
+    shadowColor: '#000',
+    backgroundColor: colors.primary,
+    shadowOffset: {
+      width: 0,
+      height: 12,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 16.0,
   },
 });
 
